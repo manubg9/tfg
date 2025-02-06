@@ -145,8 +145,8 @@ plt.pcolormesh(X1, Y1, Mlm_magnitude1_11, shading='auto')
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"y")
-plt.title(r"$|M_m^l|$, $z=0$, $l=m=1$")
-plt.colorbar()
+plt.title(r"$l=m=1$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(242)
@@ -155,28 +155,28 @@ plt.pcolormesh(X1, Y1, Mlm_magnitude1_22, shading='auto')
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"y")
-plt.title(r"$|M_m^l|$, $z=0$, $l=m=2$")
-plt.colorbar()
+plt.title(r"$l=m=2$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(243)
 
-plt.pcolormesh(X1, Y1, Nlm_magnitude1_11, shading='auto')
+plt.pcolormesh(X1, Y1, Nlm_magnitude1_11, shading='auto', cmap = "hot")
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"y")
-plt.title(r"$|N_m^l|$, $z=0$, $l=m=1$")
-plt.colorbar()
+plt.title(r"$l=m=1$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(244)
 
-plt.pcolormesh(X1, Y1, Nlm_magnitude1_22, shading='auto')
+plt.pcolormesh(X1, Y1, Nlm_magnitude1_22, shading='auto', cmap = "hot")
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"y")
-plt.title(r"$|N_m^l|$, $z=0$, $l=m=2$")
-plt.colorbar()
+plt.title(r"$l=m=2$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(245)
@@ -185,8 +185,8 @@ plt.pcolormesh(X2, Z2, Mlm_magnitude2_11, shading='auto')
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"z")
-plt.title(r"$|M_m^l|$, $y=0$, $l=m=1$")
-plt.colorbar()
+plt.title(r"$l=m=1$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(246)
@@ -195,29 +195,34 @@ plt.pcolormesh(X2, Z2, Mlm_magnitude2_22, shading = "auto")
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"z")
-plt.title(r"$|M_m^l|$, $y=0$, $l=m=2$")
-plt.colorbar()
+plt.title(r"$l=m=2$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(247)
 
-plt.pcolormesh(X2, Z2, Nlm_magnitude_y0_11, shading='auto')
+plt.pcolormesh(X2, Z2, Nlm_magnitude_y0_11, shading='auto', cmap = "hot")
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"z")
-plt.title(r"$|N_m^l|$, $y=0$, $l=m=1$")
-plt.colorbar()
+plt.title(r"$l=m=1$")
+plt.colorbar(shrink = 0.7)
 
 
 plt.subplot(248)
 
-plt.pcolormesh(X2, Z2, Nlm_magnitude_y0_22, shading='auto')
+plt.pcolormesh(X2, Z2, Nlm_magnitude_y0_22, shading='auto', cmap = "hot")
 plt.gca().set_aspect('equal')
 plt.xlabel(r"x")
 plt.ylabel(r"z")
-plt.title(r"$|N_m^l|$, $y=0$, $l=m=2$")
-plt.colorbar()
+plt.title(r"$l=m=2$")
+plt.colorbar(shrink = 0.7)
 
+plt.figtext(0.25, 0.93, r"$\left| M_{lm} \right|$", fontsize = "large"
+            , weight = "heavy")
+
+plt.figtext(0.75, 0.93, r"$\left| N_{lm} \right|$", fontsize = "large"
+            , weight = "heavy")
 
 
 plt.savefig("monopolos.png", dpi = 500)

@@ -63,7 +63,7 @@ for i in range(-l0,l0+1):
 
 #%%
 plt.clf()
-plt.suptitle(r"$\left| M_m^l \right|$ and $\left| N_m^l \right|$ at $z=0$ with $l=1$")
+plt.suptitle(r"Electric and Magnetic Monopoles at $z=0$ with $l=1$")
 
 plt.subplot(261)
 plt.pcolormesh(X1, Y1, M_lm_z0_l1[0], shading="auto")
@@ -174,14 +174,20 @@ plt.ylabel(r"$z$")
 plt.subplot(2,6,12)
 
 plt.pcolormesh(X2, Z2, N_lm_y0_l1[2], shading="auto", cmap = "hot")
-plt.colorbar()
+plt.colorbar(shrink = 0.7)
 plt.gca().set_aspect('equal')
 plt.title(r"$m=1$")
 plt.xlabel(r"$x$")
 plt.ylabel(r"$z$")
 
 
-plt.tight_layout()
+
+
+plt.figtext(0.30, 0.90, r"$\left| M_{lm} \right|$", fontsize = "large"
+            , weight = "heavy")
+
+plt.figtext(0.70, 0.90, r"$\left| N_{lm} \right|$", fontsize = "large"
+            , weight = "heavy")
 
 
 
