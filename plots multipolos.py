@@ -90,6 +90,14 @@ for i in range(-l2,l2+1):
     N_lm_y0_l2.append(Magnitude)
 
 #%%
+
+sym_M_N_z0 = [] 
+
+for i in range(0, 2*l1 +1):
+    
+    print(i)
+
+#%%
 plt.figure(0)
 plt.clf()
 plt.suptitle(r"Electric and Magnetic Multipoles with $l=1$")
