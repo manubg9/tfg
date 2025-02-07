@@ -92,11 +92,23 @@ for i in range(-l2,l2+1):
 #%%
 
 sym_M_N_z0 = [] 
+antisym_M_N_z0 = []
+
+sym_M_N_y0 = []
+antisym_M_N_y0 = []
 
 for i in range(0, 2*l1 +1):
+   
+    a = (M_lm_z0_l1[i] + N_lm_z0_l1[i])/np.sqrt(2)
+    b = (-M_lm_z0_l1[i] + N_lm_z0_l1[i])/np.sqrt(2)
+    sym_M_N_z0.append(a)
+    antisym_M_N_z0.append(b)
     
-    print(i)
-
+    c = (M_lm_y0_l1[i] + N_lm_y0_l1[i])/np.sqrt(2)
+    d = (-M_lm_y0_l1[i] + N_lm_y0_l1[i])/np.sqrt(2)
+    sym_M_N_y0.append(c)
+    antisym_M_N_y0.append(d)
+    
 #%%
 plt.figure(0)
 plt.clf()
@@ -440,4 +452,140 @@ plt.figtext(0.035, 0.25, r"$\left| N_{lm} \right|$", size = 20)
 plt.savefig("Multipolos l2.png", dpi = 500)
 
 
+#%%
 
+plt.figure(2)
+plt.clf()
+plt.suptitle(
+    r"Symmetric and Antisymmetric linear combinations of Multipoles")
+
+
+plt.subplot(261)
+
+plt.pcolormesh(X1, Y1, sym_M_N_z0[0], shading = "auto")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$y$")
+plt.title(r"$m = -1$")
+
+
+plt.subplot(262)
+
+plt.pcolormesh(X1, Y1, sym_M_N_z0[1], shading = "auto")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$y$")
+plt.title(r"$m = 0$")
+
+
+plt.subplot(263)
+
+plt.pcolormesh(X1, Y1, sym_M_N_z0[2], shading = "auto")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$y$")
+plt.title(r"$m = 1$")
+
+
+plt.subplot(264)
+
+plt.pcolormesh(X1, Y1, antisym_M_N_z0[0], shading = "auto", cmap = "hot")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$y$")
+plt.title(r"$m=-1$")
+
+
+plt.subplot(265)
+
+plt.pcolormesh(X1, Y1, antisym_M_N_z0[1], shading = "auto", cmap = "hot")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$y$")
+plt.title(r"$m=0$")
+
+
+plt.subplot(266)
+
+plt.pcolormesh(X1, Y1, antisym_M_N_z0[2], shading = "auto", cmap = "hot")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$y$")
+plt.title(r"$m=1$")
+
+
+plt.subplot(267)
+
+plt.pcolormesh(X2, Z2, sym_M_N_y0[0], shading = "auto")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$z$")
+plt.title(r"$m = -1$")
+
+
+plt.subplot(268)
+
+plt.pcolormesh(X2, Z2, sym_M_N_y0[1], shading = "auto")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$z$")
+plt.title(r"$m = 0$")
+
+
+plt.subplot(269)
+
+plt.pcolormesh(X2, Z2, sym_M_N_y0[2], shading = "auto")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$z$")
+plt.title(r"$m = 1$")
+
+
+plt.subplot(2,6,10)
+
+plt.pcolormesh(X2, Z2, antisym_M_N_y0[0], shading = "auto", cmap = "hot")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$z$")
+plt.title(r"$m=-1$")
+
+
+plt.subplot(2,6,11)
+
+plt.pcolormesh(X2, Z2, antisym_M_N_y0[1], shading = "auto", cmap = "hot")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$z$")
+plt.title(r"$m=0$")
+
+
+plt.subplot(2,6,12)
+
+plt.pcolormesh(X2, Z2, antisym_M_N_y0[2], shading = "auto", cmap = "hot")
+# plt.colorbar()
+plt.gca().set_aspect("equal")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$z$")
+plt.title(r"$m=1$")
+
+plt.tight_layout()
+plt.figtext(0.25, 0.85, 
+        r"$\frac{\left| N_{lm} \right| + \left| M_{lm} \right|}{\sqrt{2}}$", 
+        size = 20)
+
+plt.figtext(0.75, 0.85, 
+        r"$\frac{\left| N_{lm} \right| - \left| M_{lm} \right|}{\sqrt{2}}$", 
+        size = 20)
+
+plt.savefig("Multipoles linear comb.png", dpi = 500)
