@@ -51,27 +51,17 @@ def M_nm(k, r, theta, phi, n, m):
     return sp.spherical_jn(n, k*r)*np.array([X, Y, Z])
 
 def N_nm(k, r, theta, phi, n, m):
-    # Initialize rnm with the correct shape
-    rnm = np.zeros((3, *r.shape), dtype=complex)
-    rnm[0] = 1j * np.sqrt(n * (n + 1)) * sp.sph_harm(m, n, theta, phi) * sp.spherical_jn(n, k * r) / (k * r)
     
-    # Initialize arrays for rnm2 and xnm
-    rnm2 = np.zeros((3, *r.shape), dtype=complex)
-    xnm = np.zeros((3, *r.shape), dtype=complex)
     
-    # Compute the conversion at each point
-    for i in range(r.shape[0]):
-        for j in range(r.shape[1]):
-            sph_to_cart = sph_cart(theta[i, j], phi[i, j])
-            cart_to_sph = cart_sph(theta[i, j], phi[i, j])
-            
-            rnm2[:, i, j] = sph_to_cart @ np.array([(sp.jvp(n, k * r[i, j], 1) + sp.spherical_jn(n, k * r[i, j]) / (k * r[i, j])), 0, 0])
-            xnm[:, i, j] = sph_to_cart @ np.array(X_nm(theta[i, j], phi[i, j], n, m))
-            
-            cross_product = np.cross(rnm2[:, i, j], xnm[:, i, j])
-            rnm[:, i, j] += cart_to_sph @ cross_product
+    rnm1 = 1j*np.sqrt(n*(n+1))*sp.sph_harm(m,n,theta, phi)*sp.spherical_jn(n, k*r)/(k*r)
+    rnm2 = sp.jvp(n, k*r) + sp.spherical_jn(n, k*r)/(k*r)
+    xnm = X_nm(theta, phi, n, m)
+    tnm1, pnm1 = xnm[1], xnm[2]
+    tnm2 = -rnm2*pnm1
+    pnm2 = rnm2*tnm1
     
-    return rnm
+    return rnm1, tnm2, pnm2
+    
 
 
 
