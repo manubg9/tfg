@@ -12,6 +12,7 @@ X1, Y1 = np.meshgrid(x1, y1)
 r1 = np.sqrt(X1**2 + Y1**2 + z1**2)
 theta1 = np.arccos(z1/r1)
 phi1 = np.arctan2(Y1, X1)
+phi1 = np.where(phi1 < 0, phi1 + 2*np.pi, phi1)
 
 x2 ,z2 = np.linspace(-1, 1, 100),  np.linspace(-1, 1, 100)
 y2 = 0
@@ -20,7 +21,7 @@ X2, Z2 = np.meshgrid(x2, z2)
 r2 = np.sqrt(X2**2 + y2**2 + Z2**2)
 theta2 = np.arccos(Z2/r2)
 phi2 = np.arctan2(y2, X2)
-
+phi2 = np.where(phi2 < 0, phi2 + 2*np.pi, phi2)
 #%%
 n1 = 1
 
@@ -73,6 +74,7 @@ for i in range(-n2,n2+1):
     Magnitude = np.sqrt(np.abs(NnmR)**2 + np.abs(NnmT)**2 + np.abs(NnmP)**2)
     N_nm_y0_n2.append(Magnitude)
 
+maxN2z0 = np.max(N_nm_z0_n2)
 #%%
 
 sym_M_N_z0 = [] 
@@ -238,7 +240,7 @@ plt.subplot(4,5,1)
 plt.pcolormesh(X1, Y1, M_nm_z0_n2[0], shading="auto")
 # plt.colorbar(shrink = 0.5)
 plt.gca().set_aspect('equal')
-plt.xlabel(r"$x$")
+plt.xlabel(r"$x$") 
 plt.ylabel(r"$y$")
 plt.title(r"$m = -2$")
 
