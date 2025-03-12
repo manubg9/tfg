@@ -24,6 +24,13 @@ def gamma_nm(n, m):
     c = (factorial(n+m))/(factorial(n-m))
     return np.sqrt(a*b*c)
  
+def Ppl(x, p, l):
+    
+    a = np.sqrt(2)*x
+    b = sp.assoc_laguerre(2*x**2, p, np.abs(l))
+    c = np.exp(-x**2)
+    
+    return (a**(np.abs(l)))*b*c
 # Aquí separo las integrales para aenm y anmn en dos funciones diferentes
 # porque no estoy seguro si quad_vec puede trabajar con funciones que tienen 
 # múltiples salidas
@@ -31,8 +38,9 @@ def gamma_nm(n, m):
 def int_a_nm_tflg1(alpha, k, rho, phi, z, n, m, l, p, f, w, pol):
     
     coeff = -4*(np.pi**2)*eta_f(k,f)*gamma_nm(n,m)*((1j)**(l+n-m+1))*np.exp(1j*(l-m)*phi)
-
-    comm = np.sin(alpha)*sp.lpmv(l,p,(f/w) * np.sin(alpha)) * np.exp(1j*z*np.cos(alpha))
+    
+    arg = f/w * np.sin(alpha)
+    comm = np.sin(alpha)*Ppl(arg,p,l)* np.exp(1j*z*np.cos(alpha))
     px, py = pol[0], pol[1]
     sigma = k*rho*np.sin(alpha)
     coeff1 = (px+1j*py)*np.exp((-1j)*phi)*sp.jn(l-m-1, sigma)
@@ -41,9 +49,9 @@ def int_a_nm_tflg1(alpha, k, rho, phi, z, n, m, l, p, f, w, pol):
     # b1 = -a1
     a2 = mp.pi_nm(alpha,n,m) + mp.tau_nm(alpha, n, m)
     # b2 = a2
-    aenm = coeff*comm*(coeff1*a1 + coeff2*a2)
+    aenm = comm*coeff*(coeff1*a1 + coeff2*a2)
     # amnm = comm*(coeff1*b1 + coeff2*b2)
-    
+
     return aenm
 
 def int_a_nm_tflg2(alpha, k, rho, phi, z, n, m, l, p, f, w, pol):
@@ -51,7 +59,8 @@ def int_a_nm_tflg2(alpha, k, rho, phi, z, n, m, l, p, f, w, pol):
     coeff = -4*(np.pi**2)*eta_f(k,f)*gamma_nm(n,m)*(1j**(l+n-m+1))*np.exp(1j*(l-m)*phi)
 
     # Obtengo la parte común del integrando
-    comm = np.sin(alpha)*sp.lpmv(l,p, f/w * np.sin(alpha)) * np.exp(1j*z*np.cos(alpha))
+    arg = f/w * np.sin(alpha)
+    comm = np.sin(alpha)*Ppl(arg,p,l)* np.exp(1j*z*np.cos(alpha))
     px, py = pol[0], pol[1]  # guardo los estados de polarización
     sigma = k*rho*np.sin(alpha)  # guardo sigma
     # calculo lo que precede a los "vectores" de comb lineal de tau y pi
@@ -63,7 +72,7 @@ def int_a_nm_tflg2(alpha, k, rho, phi, z, n, m, l, p, f, w, pol):
     a2 = mp.pi_nm(alpha,n,m) + mp.tau_nm(alpha, n, m)
     b2 = a2
     # aenm = comm*(coeff1*a1 + coeff2*a2)
-    amnm = coeff*comm*(coeff1*b1 + coeff2*b2)
+    amnm = comm*coeff*(coeff1*b1 + coeff2*b2)
     
     return amnm
 
@@ -91,9 +100,9 @@ p0 = 0
 pol0 = (1,0)
 pol1 = (1/np.sqrt(2), 1j/np.sqrt(2))
 # malla de 50x50 en z = 0 con magnitud de lambd0
-x1, y1 ,z1 = np.linspace(-5*lb0,5*lb0,100), np.linspace(-5*lb0,5*lb0,100), 0
+x1, y1 ,z1 = np.linspace(-3*lb0,3*lb0,100), np.linspace(-3*lb0,3*lb0,100), 0
     
-X1, Y1 = np.meshgrid(x1,y1)
+X1, Y1= np.meshgrid(x1,y1)
 
 # calculo cilindricas y esféricas para usar en los BSCs y los multipolos 
 rho1 = np.sqrt(X1**2 + Y1**2)
@@ -108,7 +117,7 @@ E_theta = 0
 E_phi = 0
 
 
-for i in range(1,4):
+for i in range(1,2):
     for j in range(-i,i+1):
 
         
@@ -116,12 +125,12 @@ for i in range(1,4):
         A, B, C = mp.M_nm(k0, r1, theta1, phi1, i, j)
         D, F, G = mp.N_nm(k0, r1, theta1, phi1, i, j)
         # Calculo aenm y anmn
-        J, K = a_nm_tflg(k0, rho1, phi1, z1, i, j, l0, p0, f0, w0, pol0, np.pi/6)
+        J, K = a_nm_tflg(k0, rho1, phi1, z1, i, j, l0, p0, f0, w0, pol0, np.radians(30))
         # hago el sumatorio independiente de cada componente 
         E_r += J*D + K*A
         E_theta += J*F + K*B
         E_phi += J*G + K*C
-        
+
         
 E_abs2 = (np.abs(E_r)**2 + np.abs(E_theta**2) + np.abs(E_phi)**2)    
 
