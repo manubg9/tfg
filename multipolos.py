@@ -1,9 +1,22 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import scipy.special as sp
 from math import factorial
 
 def sph_cart(theta, phi):
+    """
+    Matrix for switching from spherical to cartesian coordinates:
+    ----------
+    Parameters:
+
+    theta: float
+        colatitude angle
+    phi: float
+        azimuthal angle 
+    ----------
+    Returns:
+
+    Matrix
+    """
 
     sin_theta = np.sin(theta)
     cos_theta = np.cos(theta)
@@ -17,6 +30,20 @@ def sph_cart(theta, phi):
     ])
 
 def cart_sph(theta, phi):
+    """
+    Matrix for switching from cartesian to spherical coordinates:
+    ----------
+    Parameters:
+
+    theta: float
+        colatitude angle
+    phi: float 
+        azimuthal angle 
+    ----------
+    Returns:
+
+    Matrix
+    """
 
     sin_theta = np.sin(theta)
     cos_theta = np.cos(theta)
@@ -28,84 +55,293 @@ def cart_sph(theta, phi):
         [cos_theta * cos_phi, cos_theta * sin_phi, -sin_theta],
         [-sin_phi, cos_phi, 0]
     ])
-def n_nm(n,m):
-    return 1j*np.sqrt((2*n+1)*factorial(n-m)/
-                      (4*np.pi*n*(n+1)*factorial(n+m)))
+
+
+def n_nm(n: int, m: int):
+
+    """
+    Parameters
+
+    n: int
+        Order of the multipole
+    m: int
+        Degree of the multipole
+    ----------
+    Returns:
+
+    Prefactor por the multipoles in spherical coordinates in Beutel et al. 2023
+    """
+    
+    a = (2*n + 1) / (4*np.pi * n * (n + 1))
+    b = factorial(n-m)/factorial(n+m)
+    return 1j * np.sqrt(a*b)
+
+
+def j_n(n: int, x: float):
+    """
+    Parameters
+    
+    n: int
+        Order of the multipole
+    x: float
+        Argumetent of the spherical Bessel function
+    ----------
+    Returns:
+
+    Spherical Bessel function of the first kind of order n.
+    """
+    
+    return sp.spherical_jn(n, x)
+
+def j_n_diff(n: int, x: float):
+    """
+    Parameters
+
+    n: int
+       Order of the multipole
+    x: float
+        Argument of the spherical Bessel function  
+    ----------
+    Returns:
+    
+    Derivative of the spherical Bessel function of the first kind of order n.
+    """
+    
+    return sp.spherical_jn(n, x, derivative=True)
+
+def y_n(n: int, x: float):
+    """
+    Parameters
+
+    n: int
+        Order of the multipole
+    
+    x: float
+        Argument of the spherical Bessel function  
+    ----------
+    Returns:
+
+    Spherical Bessel function of the second kind of order n.
+    """
+    
+    return sp.spherical_yn(n, x)
+
+def y_n_diff(n: int, x: float):
+    """
+    Parameters
+
+    n: int
+        Order of the multipole
+    
+    x: float
+        Argument of the spherical Bessel function  
+    ----------
+    Returns:
+    
+    Derivative of the spherical Bessel function of the second kind of order n.
+    """
+    
+    return sp.spherical_yn(n, x, derivative=True)
+
+def h_n(n: int, x: float):
+    """
+    Parameters
+    
+    n: int
+        Order of the multipole
+    x: float
+        Argument of the spherical Hankel function  
+    ----------
+    Returns:
+
+    Spherical Hankel function of order n.
+    """
+    
+    return j_n(n, x) + 1j*y_n(n,x)
+
+def h_n_diff(n: int, x: float):
+    """
+    Parameters
+    
+    n: int
+        Order of the multipole
+    x: float
+        Argument of the spherical Hankel function  
+    ----------
+    Returns:
+
+    Derivative of the spherical Hankel function of order n.
+    """
+    
+    return j_n_diff(n, x) + 1j*y_n_diff(n,x)
 
 def pi_nm(theta,n,m):
+    """
+    Parameters
     
-    return m*sp.lpmv(m,n,np.cos(theta))/np.sin(theta)
+    theta: float
+        colatitude angle
+    n: int
+        Order of the multipole
+    m: int
+        Degree of the multipole
+    ----------
+    Returns:
+    
+    Function pi_nm from Beutel et al. 2023
+    """
+    return m * sp.lpmv(m, n, np.cos(theta)) / np.sin(theta)
 
 def tau_nm(theta, n, m):
-    P_nm = sp.lpmv(m, n, np.cos(theta))
-    P_nm1 = sp.lpmv(m, n+1, np.cos(theta))
-    return ((n+1)*np.cos(theta)*P_nm - (n-m+1)*P_nm1)/(np.sin(theta))
+    """
+    Parameters
+    
+    theta: float
+        colatitude angle
+    n: int
+        Order of the multipole
+    m: int
+        Degree of the multipole
+    ----------
+    Returns:
+    
+    Function tau_nm from Beutel et al. 2023
+    """
 
+    sino = np.sin(theta)
+    coso = np.cos(theta)
+    
+    pnm = sp.lpmv(m, n, coso)
+    pnm1 = sp.lpmv(m, n + 1, coso)
+    return ((-(n + 1)* coso * pnm + (n - m + 1) * pnm1)) / sino
+            
 def X_nm(theta, phi, n, m):
-    theta_nm = n_nm(n,m)*1j*pi_nm(theta,n,m)*np.exp(1j*m*phi)
-    phi_nm = -n_nm(n,m)*1j*tau_nm(theta,n,m)*np.exp(1j*m*phi)
-    r_nm = np.zeros_like(theta_nm)
-    return r_nm, theta_nm, phi_nm
+    """
+    Parameters
+    
+    theta: float
+        Polar angle
+    phi: float
+        azimuthal angle
+    n: int
+        Order of the multipole
+    m: int
+        Degree of the multipole
+    ----------
+    Returns:
+    
+    Normalized vector spherical harmonics in spherical coordinates
+    """
+    Xr = np.zeros_like(theta, dtype = complex)
+    Xt = n_nm(n, m) * 1j * pi_nm(theta, n, m) * np.exp(1j*m*phi)
+    Xp = -n_nm(n, m) * tau_nm(theta, n, m) * np.exp(1j*m*phi)
+    
+    return Xr, Xt, Xp
 
-def M_nm(k, r, theta, phi, n, m):
+def M_nm(k, r, theta, phi, n, m, Hankel = False):
+    """
+    Function to calculate the Transverse Electric mode 
+    in multipolar expansion with spherical Bessel or Hankel functions
+    ----------
+    Parameters:
+    
+    k: float
+        Wave number
+    r: float
+        Radial distance
+    theta: float
+        Polar angle
+    phi: float
+        azimuthal angle
+    n: int
+        Order of the multipole
+    m: int
+        Degree of the multipole
+    Hankel: bool
+        If True, uses spherical Hankel functions, otherwise uses spherical Bessel functions
+    ----------
+    Returns:
+    
+    r_mnm: array
+        Radial component of the multipole field
+    t_mnm: array
+        Polar component of the multipole field
+    p_mnm: array
+        Azimuthal component of the multipole field
+    """
     X, Y, Z = X_nm(theta, phi, n, m)
-    r_mnm = sp.spherical_jn(n, k*r) * X
-    t_mnm = sp.spherical_jn(n, k*r) * Y
-    p_mnm = sp.spherical_jn(n, k*r) * Z
-    return r_mnm, t_mnm, p_mnm
+     
+    if Hankel == False:
 
-def N_nm(k, r, theta, phi, n, m):
+        r_mnm = j_n(n, k*r) * X
+        t_mnm = j_n(n, k*r) * Y
+        p_mnm = j_n(n, k*r) * Z
+        return r_mnm, t_mnm, p_mnm
     
-    
-    rnm1 = 1j*np.sqrt(n*(n+1))*sp.sph_harm(m,n,phi, theta)*sp.spherical_jn(n, k*r)/(k*r)
-    rnm2 = sp.spherical_jn(n, k*r, derivative = True) + sp.spherical_jn(n, k*r)/(k*r)
-    xnm = X_nm(theta, phi, n, m)
-    tnm1, pnm1 = xnm[1], xnm[2]
-    tnm2 = -rnm2*pnm1
-    pnm2 = rnm2*tnm1
-    
-    return rnm1, tnm2, pnm2
-
-
-def pi_nm_vec(theta,n,m):
-    
-    d = theta.ndim
-    
-    if d == 2:
-        vec = np.ones_like(theta, dtype = object)
-        sh_th = theta.shape
-
-        for k in range(sh_th[0]):
+    elif Hankel == True:
         
-            for l in range(sh_th[1]):
+        r_mnm = h_n(n, k*r) * X
+        t_mnm = h_n(n, k*r) * Y
+        p_mnm = h_n(n, k*r) * Z
+        return r_mnm, t_mnm, p_mnm
+    
 
-                P_nm = sp.lpmn(m,n,np.cos(theta[k][l]))[0]
-                for i in range(m+1):
-                    P_nm[i] = i*P_nm[i] / np.sin(theta[k][l])
-            
-                vec[k][l] = vec[k][l] * P_nm
-    
-        return vec
-    
-    
-    elif d == 3:
-        vec = np.ones_like(theta, dtype = object)
-        sh_th = theta.shape
 
-        for k in range(sh_th[0]):
+def N_nm(k, r, theta, phi, n, m, Hankel = False):
+    """
+    Function to calculate the Transverse Magnetic mode 
+    in multipolar expansion with spherical Bessel or Hankel functions
+    ----------
+    Parameters:
+    
+    k: float
+        Wave number
+    r: float
+        Radial distance
+    theta: float
+        Polar angle
+    phi: float
+        azimuthal angle
+    n: int
+        Order of the multipole
+    m: int
+        Degree of the multipole
+    Hankel: bool
+        If True, uses spherical Hankel functions, otherwise uses spherical Bessel functions
+    ----------
+    Returns:
+    
+    Nr: array
+        Radial component of the multipole field
+    Nt: array
+        Polar component of the multipole field
+    p_mnm2: array
+        Azimuthal component of the multipole field
+    """
+    
+    Xr, Xt, Xp  = X_nm(theta, phi, n, m)
+    
+    if Hankel == False:
         
-            for l in range(sh_th[1]):
+        z = j_n(n, k*r)
+        dz = j_n_diff(n, k*r)
                 
-                for p in range(sh_th[2]):
-                
-                    P_nm = sp.lpmn(m,n,np.cos(theta[k][l][p]))[0]
-                    for i in range(m+1):
-                        P_nm[i] = i*P_nm[i] / np.sin(theta[k][l][p])
-            
-                    vec[k][l][p] = vec[k][l][p] * P_nm
+    elif Hankel == True:
+
+        z = h_n(n, k*r)
+        dz = h_n_diff(n, k*r)
+        
+    pre = dz + z/(k*r)
     
-        return vec
-               
-            
+    Nr = 1j*np.sqrt(n*(n+1))*sp.sph_harm(m, n, phi, theta)*z/(k*r)
+    Nt = pre*(-Xp)
+    Np = pre*Xt
     
+    return Nr, Nt, Np
+
+
+
+
+
+
 
