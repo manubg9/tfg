@@ -92,6 +92,31 @@ def bsc_bessel(k, rho, phi, z, n, m, l , pol, NA):
     return ae, am
 
 
+#%%
+
+def bsc_cyl(k, rhop, phip, zp, n, m, l, pol, NA):
     
+    a0 = np.radians(NA)
+    polr, polp = pol
+    cosa0 = np.cos(a0)
+    sina0 = np.sin(a0)
+    sigma = k*rhop*sina0
+    tau0 = mp.tau_nm(a0, n, m)
+    pi0 = mp.pi_nm(a0, n, m)
+    frac = 8*np.pi/(1+cosa0)
+    arg1 = 1j*(l-m)*phip
+    exp1 = np.exp(arg1)
+    arg2 = 1j*k*cosa0*zp
+    exp2 = np.exp(arg2)
+    gamma = gamma_nm(n, m)
+    bessel = sp.jn(l-m, sigma)
+    comm = frac*gamma*(1j**(l+n-m))*exp1*exp2*bessel
+    comb1 = polr*tau0 - 1j*polp*pi0
+    comb2 = polr*pi0 - 1j*polp*tau0
+    ae = comm*comb1
+    am = comm*comb2
+    
+    return ae, am
+#%%
 
 

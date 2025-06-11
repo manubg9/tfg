@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import beams as bsc
 import multipolos as mp
 import time
-
+import scipy.special as sp
 #%%
 
 def plot_beams(btype, grid_size, nmax, lb0, rhop, phip, zp, l, p, f, w, pol, NA):
         
-    k = 2*np.pi/lb0
+    k = 2*np.pi/lb0 
     
     extent = np.linspace(-2.5*lb0, 2.5*lb0, grid_size)
     # Domain 
@@ -74,6 +74,10 @@ def plot_beams(btype, grid_size, nmax, lb0, rhop, phip, zp, l, p, f, w, pol, NA)
                 elif btype == "bessel":
                     
                     ae, am = bsc.bsc_bessel(k, rhop, phip, zp, nid, mid, l, pol, NA)
+                
+                elif btype =="cyl":
+                    
+                    ae, am = bsc.bsc_cyl(k, rhop, phip, zp, nid, mid, l, pol, NA)
                 
                 absae, absam = np.abs(ae), np.abs(am)
                     
@@ -142,17 +146,19 @@ def plot_beams(btype, grid_size, nmax, lb0, rhop, phip, zp, l, p, f, w, pol, NA)
     plt.clf()
     ax = plt.figure(2).add_subplot(projection="3d")
     ax.bar3d(nx,my,az, dx, dy, dze, alpha = 0.9)
+    ax.set_zlim3d(0, np.nanmax(dze))  
     plt.xticks([])
     plt.yticks([])
     plt.xlabel(r"$n$")
     plt.ylabel(r"$m$")
     plt.title(r"$\left| a^e_{nm}\right|$")
     plt.show()
-            
+        
     plt.figure(3)
     plt.clf()
     ax = plt.figure(3).add_subplot(projection="3d")
     ax.bar3d(nx,my,az, dx, dy, dzm, alpha = 0.9)
+    ax.set_zlim3d(0, np.nanmax(dzm))  
     plt.xticks([])
     plt.yticks([])
     plt.xlabel(r"$n$")
@@ -165,7 +171,28 @@ def plot_beams(btype, grid_size, nmax, lb0, rhop, phip, zp, l, p, f, w, pol, NA)
                 
                 
 #%%
-plot_beams("bessel", 500, 20, 1e-6, 0,0,0,0,0,1e-3,1e-3,(1,0), 30)               
-               
-        
 
+pol0 = (1,0)
+pol1 = (1,1j)/np.sqrt(2)
+pol2 = (1,-1j)/np.sqrt(2)
+pol3 = (0,1)
+pol4 = (1,1)
+pol5 = (1,-1)
+#%%
+plot_beams("bessel", 100, 50, 1e-6, 0,0,0,0,0,1e-3,1e-3,pol0, 70)               
+               
+
+#%%
+
+
+
+
+plt.figure(2)
+plt.gca().set_yticks([-1,1])
+
+#%%
+
+test = np.arange(-50, 50, 1)
+p = sp.jn(1 -test - 1,0)
+plt.clf()
+plt.plot(test, p, "r." )
