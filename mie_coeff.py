@@ -1,5 +1,5 @@
-)import numpy as np
-import scipy.special as spec
+import numpy as np
+import scipy.special as sp
 
 def mie_ab(n, wavelength, radius, m_particle, n_medium=1.0):
 
@@ -13,7 +13,7 @@ def mie_ab(n, wavelength, radius, m_particle, n_medium=1.0):
         wavelength : float or array 
             in meters
         radius     : float
-             particle radius in meters
+             particle radius in m
         m_particle : complex or array
              complex refractive index of the particle
         n_medium   : float
@@ -22,7 +22,7 @@ def mie_ab(n, wavelength, radius, m_particle, n_medium=1.0):
     Returns:
 
         a_n, b_n : complex 
-            Mie coefficients
+            Mie coefficients Eqs. 4.1 and 4.2
     """
     k = 2 * np.pi * n_medium / wavelength
     x = k * radius
@@ -30,10 +30,10 @@ def mie_ab(n, wavelength, radius, m_particle, n_medium=1.0):
     mx = m * x
 
     # Riccati-Bessel functions
-    psi_n = lambda z: z * spec.spherical_jn(n, z)
-    psi_n_prime = lambda z: spec.spherical_jn(n, z) + z * spec.spherical_jn(n, z, derivative=True)
-    xi_n = lambda z: psi_n(z) + 1j * z * spec.spherical_yn(n, z)
-    xi_n_prime = lambda z: psi_n_prime(z) + 1j * (spec.spherical_yn(n, z) + z * spec.spherical_yn(n, z, derivative=True))
+    psi_n = lambda z: z * sp.spherical_jn(n, z)
+    psi_n_prime = lambda z: sp.spherical_jn(n, z) + z * sp.spherical_jn(n, z, derivative=True)
+    xi_n = lambda z: psi_n(z) + 1j * z * sp.spherical_yn(n, z)
+    xi_n_prime = lambda z: psi_n_prime(z) + 1j * (sp.spherical_yn(n, z) + z * sp.spherical_yn(n, z, derivative=True))
 
     a_n = (m * psi_n(mx) * psi_n_prime(x) - psi_n(x) * psi_n_prime(mx)) / \
           (m * psi_n(mx) * xi_n_prime(x) - xi_n(x) * psi_n_prime(mx))

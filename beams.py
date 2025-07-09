@@ -1,14 +1,29 @@
-import multipolos as mp
+import multipoles as mp
 import numpy as np
 import scipy.integrate as integ
 import scipy.special as sp
-import matplotlib.pyplot as plt
 from math import factorial 
-import time
-#%%
 
 
+"""
+Auxiliar Functions
+
+"""
 def eta_f(k, f):
+    
+    """
+    Parameters
+    -------------
+        k: float
+            Beam's wavenumber in m^-1
+        
+        f: float
+            focal distance of the lens in m
+            
+    Returns: complex
+    -------------
+      eta_f defined in Section 3.1     
+    """
     
     x = 1j*k*f
     
@@ -17,6 +32,19 @@ def eta_f(k, f):
 
 def gamma_nm(n,m):
     
+    """
+    Parameters
+    -------------
+         n: int
+             multipole order
+        m: int
+            multipole degree
+    Returns: float
+    -------------
+    
+    gamma_nm function defined in Section 3.1
+    
+    """
     x = 1/(4*np.pi)
     y = (2*n+1)/(n*(n+1))
     z = factorial(n-m)/factorial(n+m)
@@ -25,14 +53,68 @@ def gamma_nm(n,m):
 
 def Ppl(x,l,p):
     
+    """
+    Parameters
+    -------------
+    
+        x: float 
+            argument
+        l: int
+            topological charge
+        p: int
+            radial index
+    
+    Returns: float
+    -------------
+    
+        P_p^l(x) function defined in Section 3.1
+    """
     a = (np.sqrt(2)*x)**(abs(l))
     b = sp.assoc_laguerre(2*x**2,p, abs(l))
     c = np.exp(-x**2)
     return a*b*c
 
+"""
+Tightly-Focused Laguerre-Gaussian Beams
+"""
+
 
 def bsc_tflg(k, rho, phi, z, n, m, l, p, f, w, pol, NA):
     
+    """
+    Parameters
+    -------------
+        k: float
+            beam's wavenumber
+        rho: float
+            meters
+        phi: float
+            radians
+        z: float
+            meters
+                arbitrary point for the beams in cylindrical coordinates
+        n: int
+            multipole order
+        m: int
+            multipole degree
+        l: int
+            topological charge
+        p: int
+            radial index
+        f: float
+            focal distance in m
+        w: float
+            width radius in m
+        pol: tuple, array of size 2
+            polarization state (px,py)         
+        NA: float
+                numerical aperture or half cone angle in degrees
+    Returns:
+    -------------
+    
+    ae, am: complex
+        BSCs for Tightly-Focused Laguerre-Gaussian beams Eq. (3.3)
+    """
     a_max = np.radians(NA)
     prefactor = -4*(np.pi**2)*eta_f(k,f)*gamma_nm(n,m)*(1j**(l+n-m+1))*np.exp(1j*(l-m)*phi)
     
@@ -71,13 +153,45 @@ def bsc_tflg(k, rho, phi, z, n, m, l, p, f, w, pol, NA):
     am = prefactor * integ.quad_vec(integrand, 0, a_max, args=("m"))[0]
     
     return ae, am
-                         
+    
 
-#%%
+                    
+"""
+Bessel beams
+"""
 
-"bessel beams"
+
 
 def bsc_bessel(k, rho, phi, z, n, m, l , pol, NA):
+    
+    """
+    Parameters
+    -------------
+        k: float
+            beam's wavenumber
+        rho: float
+            meters
+        phi: float
+            radians
+        z: float
+            meters
+                arbitrary point for the beams in cylindrical coordinates
+        n: int
+            multipole order
+        m: int
+            multipole degree
+        l: int
+            topological charge
+        pol: tuple, array of size 2
+            polarization state (px,py)         
+        NA: float
+                numerical aperture or half cone angle in degrees
+    Returns:
+    -------------
+    
+    ae, am: complex
+        BSCs for Bessel beams Eq. (3.4)
+    """
     a_max = np.radians(NA)
     px, py = pol
     sigma = k*rho*np.sin(a_max)
@@ -92,21 +206,51 @@ def bsc_bessel(k, rho, phi, z, n, m, l , pol, NA):
     return ae, am
 
 
-#%%
+"""
+Cylindrical vector Beams BSCs
+"""
 
-def bsc_cyl(k, rhop, phip, zp, n, m, l, pol, NA):
+def bsc_cyl(k, rho, phi, z, n, m, l, pol, NA):
     
+    """
+    Parameters
+    -------------
+        k: float
+            beam's wavenumber
+        rho: float
+            meters
+        phi: float
+            radians
+        z: float
+            meters
+                arbitrary point for the beams in cylindrical coordinates
+        n: int
+            multipole order
+        m: int
+            multipole degree
+        l: int
+            topological charge
+        pol: tuple, array of size 2
+            polarization state (px,py)         
+        NA: float
+                numerical aperture or half cone angle in degrees
+    Returns:
+    -------------
+    
+    ae, am: complex
+        BSCs for Cylindrical Vector beams Eq. (3.5)
+    """
     a0 = np.radians(NA)
     polr, polp = pol
     cosa0 = np.cos(a0)
     sina0 = np.sin(a0)
-    sigma = k*rhop*sina0
+    sigma = k*rho*sina0
     tau0 = mp.tau_nm(a0, n, m)
     pi0 = mp.pi_nm(a0, n, m)
     frac = 8*np.pi/(1+cosa0)
-    arg1 = 1j*(l-m)*phip
+    arg1 = 1j*(l-m)*phi
     exp1 = np.exp(arg1)
-    arg2 = 1j*k*cosa0*zp
+    arg2 = 1j*k*cosa0*z
     exp2 = np.exp(arg2)
     gamma = gamma_nm(n, m)
     bessel = sp.jn(l-m, sigma)
@@ -114,9 +258,8 @@ def bsc_cyl(k, rhop, phip, zp, n, m, l, pol, NA):
     comb1 = polr*tau0 - 1j*polp*pi0
     comb2 = polr*pi0 - 1j*polp*tau0
     ae = comm*comb1
-    am = comm*comb2
-    
+    am = comm*comb2  
+        
     return ae, am
-#%%
 
 
