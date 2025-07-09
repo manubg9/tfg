@@ -20,13 +20,27 @@ parameters
 -----------
 """
 
-r_p = 200e-9
+a_p = 200e-9
 n_p = 4
 wavelength = 1064e-9
 k = 2*np.pi/wavelength
 nmax = 20
 size = 250
 
+
+f = 1e-3
+w = 1e-3
+l = 0
+p = 0
+r_p = (0,0,0)
+rhop, phip, zp = r_p
+NA = 30
+
+"""
+-------------------
+Polarization States
+--------------------
+"""
 pol0 = (1,0)
 pol1 = (1,1j)/np.sqrt(2)
 pol2 = (1,-1j)/np.sqrt(2)
@@ -83,9 +97,9 @@ for i in range(1, nmax+1):
         """
         choose your beam
         """
-        # ae, am = bsc.bsc_tflg(k, 0, 0, 0, i, j, 0, 0, 1e-3, 1e-3, pol0, 30)
-        # ae, am = bsc.bsc_bessel(k, 0, 0, 0, i, j, 0, pol0, 30)
-        ae, am = bsc.bsc_cyl(k, 0, 0, 0, i, j, 0, pol0, 30)
+        # ae, am = bsc.bsc_tflg(k, rhop, phip, zp, i, j, l, p, f, w, pol0, NA)
+        # ae, am = bsc.bsc_bessel(k, rhop, phip, zp, i, j, l, pol0, NA)
+        ae, am = bsc.bsc_cyl(k, rhop, phip, zp, i, j, l, pol0, NA)
         
         if ae==0 and am==0:
             continue
@@ -97,7 +111,7 @@ for i in range(1, nmax+1):
             Nry, Nty, Npy = mp.N_nm(k, r2, theta2, phi2, i, j, True)
         
        
-            an, bn = mie.mie_ab(i, wavelength, r_p, n_p)
+            an, bn = mie.mie_ab(i, wavelength, a_p, n_p)
         
             Erz += ae*an*Nrz + am*bn*Mrz
             Etz += ae*an*Ntz + am*bn*Mtz
@@ -108,11 +122,11 @@ for i in range(1, nmax+1):
         
         
 E2z = np.abs(Erz)**2 + np.abs(Etz)**2 + np.abs(Epz)**2
-E2z = np.where(r1> 200e-9, E2z, np.nan)
+E2z = np.where(r1> a_p, E2z, np.nan)
 E2z = E2z/np.nanmax(E2z)
 
 E2y = np.abs(Ery)**2 + np.abs(Ety)**2 + np.abs(Epy)**2
-E2y = np.where(r2> 200e-9, E2y, np.nan)
+E2y = np.where(r2> a_p, E2y, np.nan)
 E2y = E2y/np.nanmax(E2y)
 
 #%%
@@ -126,7 +140,7 @@ plt.clf()
 
 plt.pcolormesh(X1,Y1, E2z, cmap="jet")
 plt.gca().set_aspect("equal")
-particle = plt.Circle((0,0), radius = 200e-9, color = "gray")
+particle = plt.Circle((0,0), radius = a_p, color = "gray")
 plt.gca().add_patch(particle)
 ref= plt.Rectangle((-0.5e-6, -0.65e-6), wavelength, 0.05e-6, facecolor = "black", edgecolor = "white")
 plt.gca().add_patch(ref)
@@ -144,7 +158,7 @@ plt.gca().set_aspect("equal")
 ref= plt.Rectangle((-0.5e-6, -0.65e-6), wavelength, 0.05e-6, facecolor = "black", edgecolor = "white")
 plt.gca().add_patch(ref)
 plt.text(0, -0.55e-6, r"$\lambda_0$", color="white", fontsize="xx-large")
-particle = plt.Circle((0,0), radius = 200e-9, color = "gray")
+particle = plt.Circle((0,0), radius = a_p, color = "gray")
 plt.gca().add_patch(particle)
 plt.title(r"$xz$-plane $y=0$")
 plt.colorbar()

@@ -18,7 +18,13 @@ wavelength = 1064e-9
 k = 2*np.pi/wavelength
 nmax = 20
 size = 250
-
+f = 1e-3
+w = 1e-3
+l = 0
+p = 0
+r_p = (0,0,0)
+rhop, phip, zp = r_p
+NA = 30
 """
 -------------------
 Polarization States
@@ -78,11 +84,11 @@ for i in range(1, nmax+1):
     for j in range(-i,i+1):
         print((i,j))
         """
-        choose your beam
+        choose and tailor your beam
         """
-        # ae, am = bsc.bsc_tflg(k, 0, 0, 0, i, j, 0, 0, 1e-3, 1e-3, pol0, 30)
-        # ae, am = bsc.bsc_bessel(k, 0, 0, 0, i, j, 0, pol0, 30)
-        ae, am = bsc.bsc_cyl(k, 0, 0, 0, i, j, 0, pol0, 30)
+        # ae, am = bsc.bsc_tflg(k, rhop, phip, zp, i, j, l, p, f, w, pol0, NA)
+        # ae, am = bsc.bsc_bessel(k, rhop, phip, zp, i, j, l, pol0, NA)
+        ae, am = bsc.bsc_cyl(k, rhop, phip, zp, i, j, l, pol0, NA)
         
         if ae==0 and am==0:
             continue

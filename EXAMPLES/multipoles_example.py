@@ -12,7 +12,7 @@ import multipoles as mp
 Parameters
 -----------
 """
-r_p = 200e-9
+a_p = 200e-9
 wavelength = 1064e-9
 k = 2*np.pi/wavelength
 n = 1
@@ -92,19 +92,19 @@ Nya = Nya/np.nanmax(Nya)
 
 Mrzh, Mtzh, Mpzh = mp.M_nm(k, r1h, theta1h, phi1h, n, m, True)
 Mzah = np.abs(Mrzh)**2 + np.abs(Mtzh)**2 + np.abs(Mpzh)**2
-Mzah = np.where(r1h> r_p, Mzah, np.nan)
+Mzah = np.where(r1h> a_p, Mzah, np.nan)
 Mzah = Mzah/np.nanmax(Mzah)
 Mryh, Mtyh, Mpyh = mp.M_nm(k, r2h, theta2h, phi2h, n, m, True)
 Myah = np.abs(Mryh)**2 + np.abs(Mtyh)**2 + np.abs(Mpyh)**2
-Myah = np.where(r2h> r_p, Myah, np.nan)
+Myah = np.where(r2h> a_p, Myah, np.nan)
 Myah = Myah/np.nanmax(Myah)
 Nrzh, Ntzh, Npzh = mp.N_nm(k, r1h, theta1h, phi1h, n, m, True)
 Nzah = np.abs(Nrzh)**2 + np.abs(Ntzh)**2 + np.abs(Npzh)**2
-Nzah = np.where(r1h> r_p, Nzah, np.nan)
+Nzah = np.where(r1h> a_p, Nzah, np.nan)
 Nzah = Nzah/np.nanmax(Nzah)
 Nryh, Ntyh, Npyh = mp.N_nm(k, r2h, theta2h, phi2h, n, m, True)
 Nyah = np.abs(Nryh)**2 + np.abs(Ntyh)**2 + np.abs(Npyh)**2
-Nyah = np.where(r2h> r_p, Nyah, np.nan)
+Nyah = np.where(r2h> a_p, Nyah, np.nan)
 Nyah = Nyah/np.nanmax(Nyah)
 
 
@@ -180,7 +180,7 @@ plt.pcolormesh(X1h,Y1h, Mzah, cmap="jet")
 plt.gca().set_aspect("equal")
 plt.colorbar()
 plt.title(r"$M_{nm}^{(3)}$ $xy$-plane $z=0$")
-particle = plt.Circle((0,0), radius = r_p, color = "gray")
+particle = plt.Circle((0,0), radius = a_p, color = "gray")
 plt.gca().add_patch(particle)
 ref= plt.Rectangle((-0.5e-6, -0.65e-6), wavelength, 0.05e-6, facecolor = "black", edgecolor = "white")
 plt.gca().add_patch(ref)
@@ -194,7 +194,7 @@ plt.clf()
 plt.pcolormesh(X2h, Z2h, Myah, cmap = "jet")
 plt.gca().set_aspect("equal")
 plt.title(r"$M_{nm}^{(3)}$ $xz$-plane $y=0$")
-particle = plt.Circle((0,0), radius = r_p, color = "gray")
+particle = plt.Circle((0,0), radius = a_p, color = "gray")
 plt.gca().add_patch(particle)
 ref= plt.Rectangle((-0.5e-6, -0.65e-6), wavelength, 0.05e-6, facecolor = "black", edgecolor = "white")
 plt.gca().add_patch(ref)
@@ -211,7 +211,7 @@ plt.pcolormesh(X1h,Y1h, Nzah, cmap="jet")
 plt.gca().set_aspect("equal")
 plt.colorbar()
 plt.title(r"$N_{nm}^{(3)}$ $xy$-plane $z=0$")
-particle = plt.Circle((0,0), radius = r_p, color = "gray")
+particle = plt.Circle((0,0), radius = a_p, color = "gray")
 plt.gca().add_patch(particle)
 ref= plt.Rectangle((-0.5e-6, -0.65e-6), wavelength, 0.05e-6, facecolor = "black", edgecolor = "white")
 plt.gca().add_patch(ref)
@@ -225,7 +225,7 @@ plt.clf()
 plt.pcolormesh(X2h, Z2h, Nyah, cmap = "jet")
 plt.gca().set_aspect("equal")
 plt.title(r"$N_{nm}^{(3)}$ $xz$-plane $y=0$")
-particle = plt.Circle((0,0), radius = r_p, color = "gray")
+particle = plt.Circle((0,0), radius = a_p, color = "gray")
 plt.gca().add_patch(particle)
 ref= plt.Rectangle((-0.5e-6, -0.65e-6), wavelength, 0.05e-6, facecolor = "black", edgecolor = "white")
 plt.gca().add_patch(ref)
